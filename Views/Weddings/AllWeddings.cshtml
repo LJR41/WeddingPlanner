@@ -1,0 +1,38 @@
+@model List<Wedding>
+<h1>Welcome!</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+        <th scope="col">Wedding Of</th>
+        <th scope="col">Date</th>
+        <th scope="col">Guest Count</th>
+        <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(Wedding w in Model)
+        {
+            bool rsvp = w.GuestList.Any(g => g.UserId == Context.Session.GetInt32("LogId"));
+            <tr>
+        <td><a asp-route-weddingId="@w.WeddingId" asp-action="OneWedding" asp-controller="Weddings"> @w.WedderOne & @w.WedderTwo </a></td>
+        <td>@w.Date</td>
+        <td>@w.GuestList.Count</td>
+
+        <td>
+            @{
+                if(w.UserId == Context.Session.GetInt32("LogId"))
+                {
+                    <form asp-action="DeleteWedding" asp-route-weddingId="@w.WeddingId" asp-controller="Weddings" method="POST"><button class="btn btn-danger">Delete</button></form>
+                }
+                else
+                {
+                    <form asp-action="ToggleRSVP" asp-route-weddingId="@w.WeddingId" asp-controller="Weddings" method="POST"><button class="btn btn-primary">@( rsvp?"Un-RSVP" : "RSVP")</button></form>
+                }
+            }
+        </td>
+        </tr>
+        }
+    
+    </tbody>
+</table>
